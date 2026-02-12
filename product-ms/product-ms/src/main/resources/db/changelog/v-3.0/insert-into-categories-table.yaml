@@ -1,0 +1,32 @@
+databaseChangeLog:
+  - changeSet:
+      id: 001-insert-into-categories-table-2026-01-17
+      author: Hamid Guluzadeh
+      changes:
+        - insert:
+            tableName: categories
+            columns:
+              - column:
+                  name: category_name
+                  value: Electronics
+
+        - insert:
+            tableName: categories
+            columns:
+              - column:
+                  name: category_name
+                  value: Books
+
+        - insert:
+            tableName: categories
+            columns:
+              - column:
+                  name: category_name
+                  value: Clothing
+
+        - insert:
+            tableName: categories
+            columns:
+              - column:
+                  name: category_name
+                  value: Home & Kitchen
