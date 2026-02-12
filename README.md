@@ -3,7 +3,7 @@ E-Commerce Microservices Ecosystem
 This repository contains a fully functional, high-performance E-Commerce backend built with a Microservices Architecture. The system leverages modern Java technologies, focusing on secure authentication, synchronous service-to-service communication, and asynchronous event-driven notifications.
 
 🚀 Technologies & Tools
-Java 21 & Spring Boot 3.3.12
+Java 21 & Spring Boot 3.5.10
 
 Spring Security & JWT: Centralized authentication with Access and Refresh token logic.
 
