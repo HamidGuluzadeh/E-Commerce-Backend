@@ -1,0 +1,57 @@
+spring:
+  application:
+    name: payment-ms
+
+  datasource:
+      url: jdbc:postgresql://localhost:5435/payment_db
+      username: root
+      password: admin
+      driver-class-name: org.postgresql.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: none
+    show-sql: true
+    open-in-view: false
+    properties:
+      hibernate:
+      format_sql: false
+
+  liquibase:
+    enabled: true
+    change-log: classpath:db/changelog/db.changelog-master.yaml
+    contexts: dev
+    drop-first: false
+    database-change-log-table: DATABASECHANGELOG
+    database-change-log-lock-table: DATABASECHANGELOGLOCK
+
+  kafka:
+    bootstrap-servers: localhost:9093
+
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+      acks: all
+      retries: 3
+
+    consumer:
+      group-id: payment-ms-group
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      properties:
+        spring.json.trusted.packages: "*"
+
+server:
+  port: 8082
+  servlet:
+    context-path: /payment-ms
+
+feign:
+  clients:
+    product-service:
+      url: http://localhost:8081/product-ms/users
+
+jwt:
+  accessToken:
+    secret: "CHANGE_THIS_TO_A_VERY_LONG_RANDOM_SECRET_KEY_256_BITS_ACCESS"

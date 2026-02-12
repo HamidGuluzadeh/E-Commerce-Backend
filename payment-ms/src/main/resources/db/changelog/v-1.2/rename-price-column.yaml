@@ -1,0 +1,10 @@
+databaseChangeLog:
+  - changeSet:
+      id: 001-rename-price-column-to-total-amount-2026-02-09
+      author: Hamid Guluzadeh
+      changes:
+        - renameColumn:
+            tableName: payment_history
+            oldColumnName: price
+            newColumnName: total_amount
+            columnDataType: NUMERIC(6, 2)

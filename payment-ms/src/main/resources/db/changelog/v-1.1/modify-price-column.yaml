@@ -1,0 +1,9 @@
+databaseChangeLog:
+  - changeSet:
+      id: 001-modify-price-column-2026-02-08
+      author: Hamid Guluzadeh
+      changes:
+        - modifyDataType:
+            tableName: payment_history
+            columnName: price
+            newDataType: NUMERIC(6, 2)
