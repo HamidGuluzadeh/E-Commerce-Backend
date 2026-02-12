@@ -1,0 +1,72 @@
+databaseChangeLog:
+  - changeSet:
+      id: 001-create-refresh-tokens-table-2026-01-12
+      author: Hamid Guluzadeh
+      changes:
+        - createTable:
+            tableName: refresh_tokens
+            columns:
+              - column:
+                  name: id
+                  type: char(36)
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+
+              - column:
+                  name: user_id
+                  type: char(36)
+                  constraints:
+                    nullable: false
+
+              - column:
+                  name: token_id
+                  type: varchar(128)
+                  constraints:
+                    nullable: false
+                    unique: true
+
+              - column:
+                  name: token_hash
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+                    unique: true
+
+              - column:
+                  name: expires_at
+                  type: datetime(6)
+                  constraints:
+                    nullable: false
+
+              - column:
+                  name: revoked_at
+                  type: datetime(6)
+
+              - column:
+                  name: created_at
+                  type: datetime(6)
+                  defaultValueComputed: CURRENT_TIMESTAMP(6)
+                  constraints:
+                    nullable: false
+
+        - addForeignKeyConstraint:
+            baseTableName: refresh_tokens
+            baseColumnNames: user_id
+            referencedTableName: users
+            referencedColumnNames: user_id
+            constraintName: fk_refresh_tokens_users
+
+        - createIndex:
+            tableName: refresh_tokens
+            indexName: idx_refresh_tokens_user_id
+            columns:
+              - column:
+                  name: user_id
+
+        - createIndex:
+            tableName: refresh_tokens
+            indexName: idx_refresh_tokens_expires_at
+            columns:
+              - column:
+                  name: expires_at
