@@ -4,9 +4,11 @@ import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
+import lombok.Builder;
 
 import java.math.BigDecimal;
 
+@Builder
 public record AddProductRequestDto(@NotBlank(message = "Product name cannot be empty!")
                                    @Size(max = 150, message = "Product name cannot contain more than 150 characters!")
                                    String productName,

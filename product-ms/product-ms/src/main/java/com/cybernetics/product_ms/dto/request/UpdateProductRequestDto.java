@@ -3,9 +3,11 @@ package com.cybernetics.product_ms.dto.request;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.Size;
+import lombok.Builder;
 
 import java.math.BigDecimal;
 
+@Builder
 public record UpdateProductRequestDto(@Size(max = 150, message = "Product name cannot contain more than 150 characters!")
                                       String productName,
                                       String description,

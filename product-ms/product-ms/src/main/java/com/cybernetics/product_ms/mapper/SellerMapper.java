@@ -15,6 +15,6 @@ public interface SellerMapper {
     @Mapping(source = "categoryId", target = "category.categoryId")
     ProductEntity mapProductDtoToEntity(AddProductRequestDto addProductRequestDto);
 
-    void mapUpdateProductDtoToEntity(UpdateProductRequestDto updateProductRequestDto, @MappingTarget ProductEntity productEntity);
+    ProductEntity mapUpdateProductDtoToEntity(UpdateProductRequestDto updateProductRequestDto, @MappingTarget ProductEntity productEntity);
 
 }
