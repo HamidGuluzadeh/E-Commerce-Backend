@@ -4,6 +4,7 @@ import com.cybernetics.payment_ms.dto.request.DecreaseCountReqDto;
 import com.cybernetics.payment_ms.dto.request.KafkaRequestDto;
 import com.cybernetics.payment_ms.dto.request.PaymentRequestDto;
 import com.cybernetics.payment_ms.dto.response.AzericardResponseDto;
+import com.cybernetics.payment_ms.dto.response.GetStockPriceResponseDto;
 import com.cybernetics.payment_ms.dto.response.PaymentResponseDto;
 import com.cybernetics.payment_ms.entity.PaymentHistoryEntity;
 import com.cybernetics.payment_ms.exception.AzericardFailedException;
@@ -21,6 +22,7 @@ import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.PathVariable;
 
 import java.math.BigDecimal;
 
@@ -44,19 +46,13 @@ public class PaymentServiceImpl implements PaymentService {
         PaymentHistoryEntity paymentHistoryEntity =
                 paymentHistoryMapper.mapDtoToEntity(paymentRequestDto);
 
-        Integer productCount = productFeignClient.getProductCount(paymentRequestDto.productId());
+        GetStockPriceResponseDto stockAndPriceData = fetchStockAndPriceData(paymentRequestDto.productId());
 
-        BigDecimal productPrice = productFeignClient.getProductPrice(paymentRequestDto.productId());
-
-        System.out.println("DEBUG: Product ID: " + paymentRequestDto.productId());
-        System.out.println("DEBUG: Product count: " + productCount);
-
-        if (paymentRequestDto.quantity() > productCount) {
+        if (paymentRequestDto.quantity() > stockAndPriceData.stock()) {
             throw new NotEnoughProductException("Not enough products!");
         }
 
-        BigDecimal totalAmount = productPrice.multiply(new BigDecimal(paymentRequestDto.quantity()));
-
+        BigDecimal totalAmount = stockAndPriceData.price().multiply(new BigDecimal(paymentRequestDto.quantity()));
 
         paymentHistoryEntity.setStatus(NEW.name());
         paymentHistoryEntity.setTotalAmount(totalAmount);
@@ -66,19 +62,8 @@ public class PaymentServiceImpl implements PaymentService {
         paymentHistoryEntity.setStatus(PENDING.name());
         paymentHistoryRepository.save(paymentHistoryEntity);
 
-        AzericardResponseDto azericardResponseDto =
-                azericardService.payAzericard(paymentRequestDto);
+        AzericardResponseDto azericardResponseDto = processAzericard(paymentRequestDto, paymentHistoryEntity);
 
-        if (!"1".equals(azericardResponseDto.status())) {
-            paymentHistoryEntity.setAzericardStatus(azericardResponseDto.status());
-            paymentHistoryEntity.setStatus(PAYMENT_FAILED.name());
-            paymentHistoryRepository.save(paymentHistoryEntity);
-
-            throw new AzericardFailedException("Payment failed!");
-        }
-
-        paymentHistoryEntity.setOrderId(azericardResponseDto.orderId());
-        paymentHistoryEntity.setAzericardStatus(azericardResponseDto.status());
         paymentHistoryEntity.setStatus(PaymentStatus.SUCCESS.name());
 
         paymentHistoryRepository.save(paymentHistoryEntity);
@@ -103,5 +88,27 @@ public class PaymentServiceImpl implements PaymentService {
                 .status(paymentHistoryEntity.getStatus())
                 .totalAmount(paymentHistoryEntity.getTotalAmount())
                 .build();
+    }
+
+    private GetStockPriceResponseDto fetchStockAndPriceData(String productId) {
+        return productFeignClient.getStockAndPrice(productId);
+    }
+
+    private AzericardResponseDto processAzericard(PaymentRequestDto paymentRequestDto, PaymentHistoryEntity paymentHistoryEntity) {
+        AzericardResponseDto azericardResponseDto =
+                azericardService.payAzericard(paymentRequestDto);
+
+        if (!"1".equals(azericardResponseDto.status())) {
+            paymentHistoryEntity.setAzericardStatus(azericardResponseDto.status());
+            paymentHistoryEntity.setStatus(PAYMENT_FAILED.name());
+            paymentHistoryRepository.save(paymentHistoryEntity);
+
+            throw new AzericardFailedException("Payment failed!");
+        }
+
+        paymentHistoryEntity.setOrderId(azericardResponseDto.orderId());
+        paymentHistoryEntity.setAzericardStatus(azericardResponseDto.status());
+
+        return azericardResponseDto;
     }
 }
