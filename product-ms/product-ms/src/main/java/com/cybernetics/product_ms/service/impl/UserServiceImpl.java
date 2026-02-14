@@ -1,8 +1,10 @@
 package com.cybernetics.product_ms.service.impl;
 
 import com.cybernetics.product_ms.dto.request.DecreaseCountRequestDto;
+import com.cybernetics.product_ms.dto.response.GetStockPriceResponseDto;
 import com.cybernetics.product_ms.dto.response.ProductResponseDto;
 import com.cybernetics.product_ms.entity.ProductEntity;
+import com.cybernetics.product_ms.exception.NotEnoughProductException;
 import com.cybernetics.product_ms.exception.ProductNotFoundException;
 import com.cybernetics.product_ms.mapper.UserMapper;
 import com.cybernetics.product_ms.repository.ProductRepository;
@@ -13,7 +15,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.stereotype.Service;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -46,31 +47,26 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Integer getProductCount(String productId) {
-        ProductEntity productEntity = productRepository.findByProductId(productId)
-                .orElseThrow(() -> new ProductNotFoundException("Product not found!"));
-
-        return productEntity.getStock();
-    }
-
-    @Override
     @Transactional
     public void decreaseProductCount(DecreaseCountRequestDto decreaseCountRequestDto) {
         ProductEntity productEntity = productRepository.findByProductId(decreaseCountRequestDto.productId())
                 .orElseThrow(() -> new ProductNotFoundException("Product not found!"));
 
         if (productEntity.getStock() < decreaseCountRequestDto.count()) {
-            throw new ProductNotFoundException("Product stock is less than requested count!");
+            throw new NotEnoughProductException("Product stock is less than requested count!");
         }
 
         productEntity.setStock(productEntity.getStock() - decreaseCountRequestDto.count());
     }
 
     @Override
-    public BigDecimal getProductPrice(String productId) {
+    public GetStockPriceResponseDto getStockAndPrice(String productId) {
         ProductEntity productEntity = productRepository.findByProductId(productId)
                 .orElseThrow(() -> new ProductNotFoundException("Product not found!"));
 
-        return productEntity.getPrice();
+        return GetStockPriceResponseDto.builder()
+                .stock(productEntity.getStock())
+                .price(productEntity.getPrice())
+                .build();
     }
 }

@@ -2,6 +2,7 @@ package com.cybernetics.product_ms.controller;
 
 import com.cybernetics.product_ms.dto.SuccessDto;
 import com.cybernetics.product_ms.dto.request.DecreaseCountRequestDto;
+import com.cybernetics.product_ms.dto.response.GetStockPriceResponseDto;
 import com.cybernetics.product_ms.dto.response.ProductResponseDto;
 import com.cybernetics.product_ms.service.impl.UserServiceImpl;
 import jakarta.validation.Valid;
@@ -12,7 +13,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.math.BigDecimal;
 import java.util.List;
 
 import static com.cybernetics.product_ms.utils.SuccessStatus.SUCCESS;
@@ -38,18 +38,13 @@ public class UserController {
         return new ResponseEntity<>(productResponseSuccessDto, HttpStatus.OK);
     }
 
-    @GetMapping("/product/{productId}/count")
-    public Integer getProductCount(@PathVariable String productId) {
-        return userService.getProductCount(productId);
-    }
-
     @PutMapping("/product/count/decrease")
     public void decreaseProductCount(@RequestBody @Valid DecreaseCountRequestDto decreaseCountRequestDto) {
         userService.decreaseProductCount(decreaseCountRequestDto);
     }
 
-    @GetMapping("/product/{productId}/price")
-    public BigDecimal getProductPrice(@PathVariable String productId) {
-        return userService.getProductPrice(productId);
+    @GetMapping("/product/{productId}/stock-price")
+    public GetStockPriceResponseDto getStockAndPrice(@PathVariable String productId) {
+        return userService.getStockAndPrice(productId);
     }
 }

@@ -1,4 +1,10 @@
 package com.cybernetics.product_ms.dto.response;
 
-public record GetCountPriceResponseDto() {
+import lombok.Builder;
+
+import java.math.BigDecimal;
+
+@Builder
+public record GetStockPriceResponseDto(Integer stock,
+                                       BigDecimal price) {
 }
