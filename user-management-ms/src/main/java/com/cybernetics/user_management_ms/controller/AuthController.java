@@ -16,8 +16,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.Optional;
-
 import static com.cybernetics.user_management_ms.utils.SuccessStatus.SUCCESS;
 
 @RestController
@@ -28,16 +26,16 @@ public class AuthController {
     AuthServiceImpl authService;
 
     @PostMapping("/login")
-    public ResponseEntity<SuccessDto<Optional<AuthResponseDto>>> login(@RequestBody @Valid LoginRequestDto loginRequestDto) {
-        Optional<AuthResponseDto> authResponseDto = authService.login(loginRequestDto);
-        SuccessDto<Optional<AuthResponseDto>> authResponseSuccessDto = new SuccessDto<>(SUCCESS, authResponseDto);
+    public ResponseEntity<SuccessDto<AuthResponseDto>> login(@RequestBody @Valid LoginRequestDto loginRequestDto) {
+        AuthResponseDto authResponseDto = authService.login(loginRequestDto);
+        SuccessDto<AuthResponseDto> authResponseSuccessDto = new SuccessDto<>(SUCCESS, authResponseDto);
         return new ResponseEntity<>(authResponseSuccessDto, HttpStatus.OK);
     }
 
     @PostMapping("/refresh")
-    public ResponseEntity<SuccessDto<Optional<AuthResponseDto>>> refresh(@RequestBody @Valid RefreshTokenRequestDto refreshTokenRequestDto) {
-        Optional<AuthResponseDto> authResponseDto = authService.refresh(refreshTokenRequestDto);
-        SuccessDto<Optional<AuthResponseDto>> authResponseSuccessDto = new SuccessDto<>(SUCCESS, authResponseDto);
+    public ResponseEntity<SuccessDto<AuthResponseDto>> refresh(@RequestBody @Valid RefreshTokenRequestDto refreshTokenRequestDto) {
+        AuthResponseDto authResponseDto = authService.refresh(refreshTokenRequestDto);
+        SuccessDto<AuthResponseDto> authResponseSuccessDto = new SuccessDto<>(SUCCESS, authResponseDto);
         return new ResponseEntity<>(authResponseSuccessDto, HttpStatus.CREATED);
     }
 }

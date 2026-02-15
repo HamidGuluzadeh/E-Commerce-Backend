@@ -1,12 +1,18 @@
 package com.cybernetics.user_management_ms.service.implement;
 
+import com.cybernetics.user_management_ms.dto.request.LoginRequestDto;
+import com.cybernetics.user_management_ms.dto.request.RefreshTokenRequestDto;
 import com.cybernetics.user_management_ms.dto.request.UserNameRequestDto;
 import com.cybernetics.user_management_ms.dto.request.UserRequestDto;
+import com.cybernetics.user_management_ms.dto.response.AuthResponseDto;
 import com.cybernetics.user_management_ms.dto.response.UserNameResponseDto;
 import com.cybernetics.user_management_ms.dto.response.UserResponseDto;
+import com.cybernetics.user_management_ms.entity.RefreshTokenEntity;
 import com.cybernetics.user_management_ms.entity.UserEntity;
 import com.cybernetics.user_management_ms.utils.UserRole;
 
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.Arrays;
 import java.util.List;
 
@@ -73,5 +79,61 @@ public class MockData {
                 .build();
 
         return Arrays.asList(userEntity1, userEntity2);
+    }
+
+    public static LoginRequestDto loginRequestDto() {
+        return LoginRequestDto.builder()
+                .username("username")
+                .password("password")
+                .build();
+    }
+
+    public static RefreshTokenRequestDto refreshTokenRequestDto() {
+        return RefreshTokenRequestDto.builder()
+                .refreshToken("refreshToken")
+                .build();
+    }
+
+    public static AuthResponseDto authResponseDto() {
+        return AuthResponseDto.builder()
+                .accessToken("accessToken")
+                .refreshToken("refreshToken")
+                .build();
+    }
+
+    public static RefreshTokenEntity refreshTokenEntity() {
+        return RefreshTokenEntity.builder()
+                .id("id")
+                .tokenId("token-uuid")
+                .tokenHash("hashed-token-value")
+                .user(userEntity())
+                .createdAt(Instant.now())
+                .expiresAt(Instant.now().plus(30, ChronoUnit.DAYS))
+                .revokedAt(null)
+                .build();
+    }
+
+    public static RefreshTokenEntity expiredRefreshTokenEntity() {
+        return RefreshTokenEntity.builder()
+                .id("id")
+                .tokenId("token-uuid")
+                .tokenHash("hashed-token-value")
+                .user(userEntity())
+                .createdAt(Instant.now().minus(30, ChronoUnit.DAYS))
+                .expiresAt(Instant.now().minusSeconds(1))
+                .revokedAt(null)
+                .build();
+    }
+
+    public static RefreshTokenEntity revokedRefreshTokenEntity() {
+        return RefreshTokenEntity.builder()
+                .id("id")
+                .tokenId("token-uuid")
+                .tokenHash("hashed-token-value")
+                .user(userEntity())
+                .createdAt(Instant.now())
+                .expiresAt(Instant.now().plus(1, ChronoUnit.DAYS))
+                .revokedAt(Instant.now())
+                .build();
     }
 }

@@ -32,7 +32,7 @@ public class AuthServiceImpl implements AuthService {
     JwtServiceImpl jwtService;
 
     @Override
-    public Optional<AuthResponseDto> login(LoginRequestDto loginRequestDto) {
+    public AuthResponseDto login(LoginRequestDto loginRequestDto) {
         UserEntity userEntity = userRepository.findByUsername(loginRequestDto.username())
                 .orElseThrow(() -> new UserNotFoundException("User not found with username: " + loginRequestDto.username()));
 
@@ -45,11 +45,11 @@ public class AuthServiceImpl implements AuthService {
         String accessToken = jwtService.generateAccessToken(userEntity);
         String refreshToken = jwtService.generateRefreshToken(userEntity);
 
-        return Optional.of(new AuthResponseDto(accessToken, refreshToken));
+        return new AuthResponseDto(accessToken, refreshToken);
     }
 
     @Override
-    public Optional<AuthResponseDto> refresh(RefreshTokenRequestDto refreshTokenRequestDto) {
+    public AuthResponseDto refresh(RefreshTokenRequestDto refreshTokenRequestDto) {
         String refreshToken = refreshTokenRequestDto.refreshToken();
 
         String tokenHash = hashToken(refreshToken);
@@ -67,7 +67,7 @@ public class AuthServiceImpl implements AuthService {
 
         String newAccessToken = jwtService.generateAccessToken(userEntity);
 
-        return Optional.of(new AuthResponseDto(newAccessToken, refreshToken));
+        return new AuthResponseDto(newAccessToken, refreshToken);
     }
 
     private String hashToken(String tokenValue) {
