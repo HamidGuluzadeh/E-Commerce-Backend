@@ -1,5 +1,6 @@
 package com.cybernetics.user_management_ms.service.implement;
 
+import com.cybernetics.user_management_ms.config.jwt.JwtProperties;
 import com.cybernetics.user_management_ms.dto.request.LoginRequestDto;
 import com.cybernetics.user_management_ms.dto.request.RefreshTokenRequestDto;
 import com.cybernetics.user_management_ms.dto.request.UserNameRequestDto;
@@ -15,6 +16,9 @@ import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.Arrays;
 import java.util.List;
+
+import static org.mockito.Mockito.lenient;
+import static org.mockito.Mockito.when;
 
 public class MockData {
     public static UserRequestDto userRequestDto() {
@@ -135,5 +139,20 @@ public class MockData {
                 .expiresAt(Instant.now().plus(1, ChronoUnit.DAYS))
                 .revokedAt(Instant.now())
                 .build();
+    }
+
+    public static UserEntity userEntity2() {
+        return UserEntity.builder()
+                .userId("id")
+                .username("username2")
+                .email("test@example.com")
+                .userRole(UserRole.SELLER)
+                .build();
+    }
+
+    public static void configureJwtProperties(JwtProperties jwtProperties, String secretKey) {
+        lenient().when(jwtProperties.accessToken().secret()).thenReturn(secretKey);
+        lenient().when(jwtProperties.accessToken().expirationMinutes()).thenReturn(15);
+        lenient().when(jwtProperties.refreshToken().expirationDays()).thenReturn(7);
     }
 }
