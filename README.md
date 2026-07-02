@@ -1,4 +1,4 @@
-markdown_content = """<div align="center">
+<div align="center">
 
 # 🛒 E-Commerce Backend (Microservices)
 
@@ -44,8 +44,6 @@ Sistem rol əsaslı girişə nəzarət, JWT autentifikasiyası (refresh tokenlə
 
 ## 🏛️ Arxitektura axını (Nümunə Ödəniş Prosesi)
 
-Code outputFile generated successfully at /mnt/data/E-Commerce-README.md
-
 ```text
 [Müştəri] ──(Satın Alma)──▶ [Payment MS]
                               │
@@ -54,7 +52,15 @@ Code outputFile generated successfully at /mnt/data/E-Commerce-README.md
                               ├─(Sinxron)─▶ [Azericard] (Ödənişi İcra Et)
                               │
                               └─(Asinxron Kafka Event)──▶ [Notification MS] ──▶ (Email Göndərilir)
-🐳 Docker KonfiqurasiyasıLayihə docker-compose.yml vasitəsilə orkestrasiya olunur. Mikroservislər və asılılıqlar:YAMLservices:
+
+---
+
+## 🐳 Docker Konfiqurasiyası
+
+Layihə `docker-compose.yml` vasitəsilə orkestrasiya olunur. Mikroservislər və asılılıqlar:
+
+```yaml
+services:
   postgres:    # PostgreSQL (Hər MS üçün ayrı schema/db) - Port 5432
   zookeeper:   # Kafka üçün Zookeeper
   kafka:       # Apache Kafka Message Broker
@@ -62,4 +68,23 @@ Code outputFile generated successfully at /mnt/data/E-Commerce-README.md
   product-ms:  # Port 8082
   payment-ms:  # Port 8083
   notify-ms:   # Port 8084
-Tətbiqlər çoxmərhələli (multi-stage) Dockerfile istifadə edir:Stage 1: Gradle ilə JAR faylının qurulması (build).Stage 2: Yüngül JRE mühitində JAR-ın işə salınması (daha kiçik imic üçün).📁 Mühit Dəyişənləri (Environment Variables)Hər mikroservis üçün application.yaml fayllarında konfiqurasiyalar mövcuddur. Docker mühitində işlədərkən adətən aşağıdakı kimi dəyişənlər tələb olunur:DəyişənTəsvirNümunə DəyərSPRING_DATASOURCE_URLBaza bağlantı linkijdbc:postgresql://postgres:5432/product_dbKAFKA_BOOTSTRAP_SERVERSKafka broker adresikafka:9092JWT_SECRET_KEYJWT şifrələmə açarıyour_super_secret_key...⚠️ İstehsal (production) mühitində bu dəyərləri daha təhlükəsiz yollarla (.env və ya Docker secrets) təqdim etmək məsləhətdir.🗃️ Verilənlər Bazası və TexnologiyalarVerilənlər Bazası: PostgreSQLORM və Miqrasiya: Spring Data JPA, LiquibaseMessage Broker: Apache KafkaAPI Sənədləşdirmə: Swagger / OpenAPIQurulma Aləti: Gradle👨‍💻 MüəllifHəmid Quluzadə Junior Level Backend Developer 🚀file_path = "/mnt/data/E-Commerce-README.md"with open(file_path, "w", encoding="utf-8") as f:f.write(markdown_content)print(f"File generated successfully at {file_path}")
+
+---
+
+## 🗃️ Verilənlər Bazası və Texnologiyalar
+
+- **Verilənlər Bazası:** PostgreSQL
+- **ORM və Miqrasiya:** Spring Data JPA, Liquibase
+- **Message Broker:** Apache Kafka
+- **API Sənədləşdirmə:** Swagger / OpenAPI
+- **Qurulma Aləti:** Gradle
+
+---
+
+## 👨‍💻 Müəllif
+
+<div align="center">
+
+**Həmid Quluzadə**
+
+</div>
